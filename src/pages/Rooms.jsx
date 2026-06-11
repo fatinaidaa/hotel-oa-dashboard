@@ -29,53 +29,45 @@ export default function Rooms() {
     return () => clearInterval(interval)
   }, [])
 
-  const changeLimit = async (roomId, delta) => {
-    const room = rooms.find(r => r.id === roomId)
+ const changeLimit = async (roomId, delta) => {
 
-    if (!room) return
+  const room = rooms.find(
+    r => r.id === roomId
+  )
 
-    const newLimit = Math.max(
-      1,
-      room.limit + delta
+  if (!room) return
+
+  const newLimit = Math.max(
+    1,
+    room.limit + delta
+  )
+
+  setSaving(roomId)
+
+  try {
+
+    await roomsAPI.updateLimit(
+      roomId,
+      newLimit
     )
 
-    // optimistic UI
-    setRooms(prev =>
-      prev.map(r =>
-        r.id === roomId
-          ? { ...r, limit: newLimit }
-          : r
-      )
+    await fetchRooms()
+
+  } catch (err) {
+
+    console.error(err)
+
+    setError(
+      'Unsuccessful update device limit.'
     )
 
-    setSaving(roomId)
+  } finally {
 
-    try {
-      await roomsAPI.updateLimit(
-        roomId,
-        newLimit
-      )
-    } catch (err) {
-      // revert kalau fail
-      setRooms(prev =>
-        prev.map(r =>
-          r.id === roomId
-            ? {
-                ...r,
-                limit: room.limit,
-              }
-            : r
-        )
-      )
+    setSaving(null)
 
-      setError(
-        'Gagal update device limit.'
-      )
-    } finally {
-      setSaving(null)
-    }
   }
 
+}
   if (loading) {
     return (
       <div className="p-6 text-sm text-gray-400">

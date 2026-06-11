@@ -43,9 +43,13 @@ export const authAPI = {
 // GET  /api/rooms/:id       → single room details
 // PUT  /api/rooms/:id/limit → update device limit
 export const roomsAPI = {
-  getAll:      ()           => api.get('/rooms'),
-  getById:     (id)         => api.get(`/rooms/${id}`),
-  updateLimit: (id, limit)  => api.put(`/rooms/${id}/limit`, { limit }),
+  getAll: () => api.get('/rooms'),
+
+  updateLimit: (roomId, newLimit) =>
+    api.post('/update-limit', {
+      roomId,
+      newLimit
+    }),
 }
 
 // ─── Nodes (ESP32) ───────────────────────────────────────────────────────────
