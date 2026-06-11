@@ -19,9 +19,9 @@ export default function Dashboard() {
         sessionsAPI.getActive(),
       ])
 
-      setRooms(roomsRes.data)
-      setRequests(requestsRes.data)
-      setSessions(sessionsRes.data)
+      setRooms(roomsRes.data || [])
+      setRequests(requestsRes.data || [])
+      setSessions(sessionsRes.data || [])
     } catch (err) {
       console.error('Dashboard fetch error:', err)
     } finally {
@@ -32,21 +32,19 @@ export default function Dashboard() {
   useEffect(() => {
     fetchAll()
 
-    // Auto refresh setiap 15 saat
     const interval = setInterval(fetchAll, 15000)
-
     return () => clearInterval(interval)
   }, [])
 
-  // Kira stats berdasarkan database Railway
+  // Railway DB fields
   const totalConnected = rooms.reduce(
     (sum, r) => sum + (r.devices ?? 0),
     0
   )
 
   const fullRooms = rooms.filter(
-    r => r.devices >= r.device_limit
-  ).length
+  r => Number(r.devices) >= Number(r.limit)
+).length
 
   if (loading) {
     return (
@@ -113,45 +111,38 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {rooms.length === 0 ? (
-          <div className="px-4 py-6 text-center text-sm text-gray-400">
-            Tiada data room.
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-px bg-gray-100">
-            {rooms.map(room => (
-              <div
-                key={room.id}
-                className="bg-white px-3 py-3 text-center"
-              >
-                <p className="text-xs text-gray-400 mb-1">
-                  Room
-                </p>
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-px bg-gray-100">
+          {rooms.map(room => (
+            <div
+              key={room.id}
+              className="bg-white px-3 py-3 text-center"
+            >
+              <p className="text-xs text-gray-400 mb-1">
+                Room
+              </p>
 
-                <p className="text-base font-semibold text-gray-800">
-                  {room.id}
-                </p>
+              <p className="text-base font-semibold text-gray-800">
+                {room.id}
+              </p>
 
-                <p className="text-xs mt-1">
-                  <span
-                    className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${
-                      room.devices >= room.device_limit
-                        ? 'bg-amber-400'
-                        : room.devices > 0
-                        ? 'bg-green-400'
-                        : 'bg-gray-300'
-                    }`}
-                  />
-
-                  {room.devices}/{room.device_limit}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
+              <p className="text-xs mt-1">
+                <span
+                  className={`inline-block w-1.5 h-1.5 rounded-full mr-1 ${
+                    Number(room.devices) >= Number(room.limit)
+                      ? 'bg-amber-400'
+                      : Number(room.devices) > 0
+                      ? 'bg-green-400'
+                      : 'bg-gray-300'
+                  }`}
+                />
+                {room.devices ?? 0}/{room.limit ?? 0}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Pending Requests Preview */}
+      {/* Pending Requests */}
       {requests.length > 0 && (
         <div className="card">
           <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
@@ -160,7 +151,6 @@ export default function Dashboard() {
                 size={14}
                 className="text-red-400"
               />
-
               Pending Requests
 
               <span className="text-xs bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 rounded-full">
@@ -191,7 +181,7 @@ export default function Dashboard() {
                     Room {req.room_id} ·{' '}
                     {new Date(
                       req.created_at
-                    ).toLocaleString('ms-MY')}
+                    ).toLocaleTimeString()}
                   </p>
                 </div>
 
