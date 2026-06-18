@@ -46,9 +46,8 @@ export const roomsAPI = {
   getAll: () => api.get('/rooms'),
 
   updateLimit: (roomId, newLimit) =>
-    api.post('/update-limit', {
-      roomId,
-      newLimit
+    api.put(`/rooms/${roomId}/limit`, {
+      limit: newLimit
     }),
 }
 
