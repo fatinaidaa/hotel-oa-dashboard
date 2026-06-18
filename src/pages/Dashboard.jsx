@@ -37,7 +37,7 @@ export default function Dashboard() {
   }, [])
 
   // Railway DB fields
-  const totalConnected = rooms.reduce(
+  const totalConnected = sessions.length(
     (sum, r) => sum + (r.devices ?? 0),
     0
   )
@@ -73,7 +73,7 @@ export default function Dashboard() {
 
         <StatCard
           label="Connected Devices"
-          value={totalConnected}
+          value={sessions.length}
           icon={Users}
           color="green"
           sub="Active now"
