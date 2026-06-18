@@ -32,7 +32,7 @@ export default function Requests() {
     fetchRequests()
 
     const interval =
-      setInterval(fetchRequests, 10000)
+      setInterval(fetchRequests, 5000)
 
     return () =>
       clearInterval(interval)
