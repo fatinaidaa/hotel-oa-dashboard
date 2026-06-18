@@ -24,7 +24,7 @@ export default function Rooms() {
     fetchRooms()
 
     // Auto refresh setiap 10 saat
-    const interval = setInterval(fetchRooms, 10000)
+    const interval = setInterval(fetchRooms, 5000)
 
     return () => clearInterval(interval)
   }, [])
@@ -115,6 +115,10 @@ export default function Rooms() {
               </th>
 
               <th className="text-left px-4 py-3 text-xs font-medium text-gray-400 uppercase">
+                Bandwidth
+              </th>
+
+              <th className="text-left px-4 py-3 text-xs font-medium text-gray-400 uppercase">
                 Status
               </th>
             </tr>
@@ -123,6 +127,8 @@ export default function Rooms() {
           <tbody className="divide-y divide-gray-50">
             {rooms.map(room => {
               const isFull =
+                room.status ===
+                'limit' ||
                 room.devices >=
                 room.limit
 
@@ -202,6 +208,19 @@ export default function Rooms() {
                     </div>
                   </td>
 
+                   {/* BANDWIDTH COLUMN */}
+                  <td className="px-4 py-3">
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        room.bandwidth === 'Con/ling'
+                          ? 'bg-red-50 text-red-600'
+                          : 'bg-blue-50 text-blue-600'
+                      }`}
+                    >
+                      {room.bandwidth}
+                    </span>
+                   </td>
+                 
                   <td className="px-4 py-3">
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
