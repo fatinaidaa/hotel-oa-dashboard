@@ -3,6 +3,22 @@ import { Check, X } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { requestsAPI } from '../services/api'
 
+const formatRequestDate = (dateValue) => {
+  const formatted = new Date(dateValue).toLocaleString('en-MY', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+
+  return formatted.replace(
+    /\b(am|pm)\b/gi,
+    period => period.toUpperCase()
+  )
+}
+
 export default function Requests() {
 
   const [requests, setRequests] = useState([])
@@ -199,8 +215,7 @@ HOTEL OA`;
                 </p>
 
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {new Date(req.created_at)
-                    .toLocaleString('ms-MY')}
+                  {formatRequestDate(req.created_at)}
                 </p>
 
               </div>

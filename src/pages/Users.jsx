@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Unplug } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { sessionsAPI } from '../services/api'
 
@@ -7,6 +8,7 @@ export default function Users() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [disconnecting, setDisconnecting] = useState(null)
 
   const fetchUsers = async () => {
 
@@ -36,6 +38,42 @@ export default function Users() {
     return () => clearInterval(interval)
 
   }, [])
+
+  const disconnectDevice = async (user) => {
+
+    const confirmed = window.confirm(
+      `Disconnect ${user.device_name || 'this device'} from Room ${user.room_id}?`
+    )
+
+    if (!confirmed) return
+
+    setError('')
+    setDisconnecting(user.id)
+
+    try {
+
+      await sessionsAPI.disconnect(user.mac_address)
+
+      setUsers(currentUsers =>
+        currentUsers.filter(currentUser =>
+          currentUser.id !== user.id
+        )
+      )
+
+    } catch (err) {
+
+      setError(
+        err.response?.data?.message ??
+        'Failed to disconnect device.'
+      )
+
+    } finally {
+
+      setDisconnecting(null)
+
+    }
+
+  }
 
   if (loading) {
 
@@ -93,6 +131,10 @@ export default function Users() {
                 Status
               </th>
 
+              <th className="text-right px-4 py-3 text-xs font-medium text-gray-400 uppercase">
+                Action
+              </th>
+
             </tr>
           </thead>
 
@@ -129,6 +171,20 @@ export default function Users() {
                   <span className="text-xs px-2 py-1 rounded-full bg-green-50 text-green-600">
                     Connected
                   </span>
+                </td>
+
+                <td className="px-4 py-3 text-right">
+                  <button
+                    type="button"
+                    onClick={() => disconnectDevice(user)}
+                    disabled={disconnecting === user.id}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+                  >
+                    <Unplug size={12} />
+                    {disconnecting === user.id
+                      ? 'Disconnecting...'
+                      : 'Disconnect'}
+                  </button>
                 </td>
 
               </tr>
