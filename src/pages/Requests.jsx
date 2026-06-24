@@ -82,7 +82,7 @@ export default function Requests() {
 
 Your additional device request for Room ${req.room_id} has been approved.
 
-You may now connect your additional device.
+Please reconnect the same device to HOTEL OA WiFi and log in again using your room credentials.
 
 Thank you.
 HOTEL OA`;
