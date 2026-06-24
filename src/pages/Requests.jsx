@@ -40,9 +40,11 @@ export default function Requests() {
   }, [])
 
   const handleAction = async (
-    id,
+    req,
     action
   ) => {
+
+    const id = req.id
 
     setProcessing(id)
 
@@ -60,6 +62,50 @@ export default function Requests() {
       setRequests(prev =>
         prev.filter(r => r.id !== id)
       )
+
+      if (window.confirm(
+        `Request ${action === 'allow'
+          ? 'approved'
+          : 'rejected'}.\n\nNotify guest via WhatsApp?`
+      )) {
+
+        const phone =
+          (req.phone_number || '')
+            .replace('+', '');
+
+        let message = '';
+
+        if (action === 'allow') {
+
+          message =
+`Hello Guest,
+
+Your additional device request for Room ${req.room_id} has been approved.
+
+You may now connect your additional device.
+
+Thank you.
+HOTEL OA`;
+
+        } else {
+
+          message =
+`Hello Guest,
+
+Your additional device request for Room ${req.room_id} has been rejected.
+
+Please contact the front desk for assistance.
+
+Thank you.
+HOTEL OA`;
+
+        }
+
+        window.open(
+          `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+          '_blank'
+        );
+      }
 
     } catch (err) {
 
@@ -165,7 +211,7 @@ export default function Requests() {
                 <button
                   onClick={() =>
                     handleAction(
-                      req.id,
+                      req,
                       'allow'
                     )
                   }
@@ -183,7 +229,7 @@ export default function Requests() {
                 <button
                   onClick={() =>
                     handleAction(
-                      req.id,
+                      req,
                       'reject'
                     )
                   }
