@@ -26,15 +26,15 @@ export default function Signup() {
     setError('')
 
     if (!form.name || !form.staffId || !form.password || !form.confirmPassword) {
-      setError('Sila isi semua maklumat.')
+      setError('Please fill in all fields.')
       return
     }
     if (form.password.length < 6) {
-      setError('Password mestilah sekurang-kurangnya 6 aksara.')
+      setError('Password must be at least 6 characters.')
       return
     }
     if (form.password !== form.confirmPassword) {
-      setError('Password tidak sepadan. Sila semak semula.')
+      setError('Passwords do not match. Please try again.')
       return
     }
 
@@ -49,7 +49,7 @@ export default function Signup() {
       setTimeout(() => navigate('/login'), 1800)
 
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Pendaftaran gagal. Cuba semula.')
+      setError(err.response?.data?.message ?? 'Registration failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -80,7 +80,7 @@ export default function Signup() {
           {success && (
             <div className="mb-4 px-3 py-2 bg-green-50 text-green-700 text-xs rounded-lg border border-green-100 flex items-center gap-2">
               <CheckCircle size={14} className="flex-shrink-0" />
-              Akaun berjaya didaftarkan! Redirecting ke login...
+              Account registered successfully! Redirecting to login...
             </div>
           )}
 
@@ -117,7 +117,7 @@ export default function Signup() {
                 <input
                   type={show.password ? 'text' : 'password'}
                   className="input-field pr-10"
-                  placeholder="Min. 6 aksara"
+                  placeholder="Minimum 6 characters"
                   value={form.password}
                   onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                 />
@@ -161,11 +161,11 @@ export default function Signup() {
               {/* Match / mismatch hint */}
               {passwordsMatch && (
                 <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                  <CheckCircle size={11} /> Password sepadan
+                  <CheckCircle size={11} /> Passwords match
                 </p>
               )}
               {passwordsMismatch && (
-                <p className="text-xs text-red-500 mt-1">Password tidak sepadan</p>
+                <p className="text-xs text-red-500 mt-1">Passwords do not match</p>
               )}
             </div>
 

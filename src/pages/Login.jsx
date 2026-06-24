@@ -16,7 +16,7 @@ export default function Login() {
     e.preventDefault()
     setError('')
     if (!form.staffId || !form.password) {
-      setError('Sila isi Staff ID dan Password.')
+      setError('Please enter your Staff ID and password.')
       return
     }
     setLoading(true)

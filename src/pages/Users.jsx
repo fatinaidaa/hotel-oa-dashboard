@@ -17,7 +17,7 @@ export default function Users() {
 
     } catch (err) {
 
-      setError('Gagal load connected users.')
+      setError('Failed to load connected users.')
 
     } finally {
 
@@ -141,7 +141,7 @@ export default function Users() {
 
         {users.length === 0 && (
           <div className="px-4 py-8 text-center text-sm text-gray-400">
-            Tiada connected users.
+            No connected users.
           </div>
         )}
 

@@ -18,7 +18,7 @@ export default function Requests() {
 
     } catch (err) {
 
-      setError('Gagal load requests.')
+      setError('Failed to load requests.')
 
     } finally {
 
@@ -111,7 +111,7 @@ HOTEL OA`;
 
       setError(
         err.response?.data?.message ??
-        'Gagal proses request.'
+        'Failed to process request.'
       )
 
     } finally {
@@ -166,7 +166,7 @@ HOTEL OA`;
           </p>
 
           <p className="text-xs text-gray-400 mt-1">
-            Tiada permintaan baharu buat masa ini.
+            There are no new requests at the moment.
           </p>
 
         </div>

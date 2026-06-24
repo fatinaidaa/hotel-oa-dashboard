@@ -89,8 +89,10 @@ return ( <div className="p-6">
 
     {nodes.map((node) => {
 
-      const signal = rssiStrength(node.rssi)
       const isOnline = node.status === 'online'
+      const signal = isOnline
+        ? rssiStrength(node.rssi)
+        : { label: '—', color: 'text-gray-400' }
 
       return (
 
@@ -178,7 +180,9 @@ return ( <div className="p-6">
               <p
                 className={`text-sm font-semibold mt-0.5 ${signal.color}`}
               >
-                {node.rssi} dBm
+                {isOnline
+                  ? `${node.rssi} dBm`
+                  : '—'}
               </p>
 
             </div>
@@ -190,7 +194,9 @@ return ( <div className="p-6">
               </p>
 
               <p className="text-sm font-semibold text-gray-700 mt-0.5">
-                {node.uptime}s
+                {isOnline
+                  ? `${node.uptime}s`
+                  : '—'}
               </p>
 
             </div>
@@ -202,7 +208,9 @@ return ( <div className="p-6">
             <span
               className={`text-xs font-medium ${signal.color}`}
             >
-              Signal: {signal.label}
+              {isOnline
+                ? `Signal: ${signal.label}`
+                : 'Signal: —'}
             </span>
 
             <span className="text-xs text-gray-400">
