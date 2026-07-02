@@ -49,6 +49,9 @@ export const roomsAPI = {
     api.put(`/rooms/${roomId}/limit`, {
       limit: newLimit
     }),
+
+  updateAccess: (roomId, data) =>
+    api.put(`/rooms/${roomId}/access`, data),
 }
 
 // ─── Nodes (ESP32) ───────────────────────────────────────────────────────────
