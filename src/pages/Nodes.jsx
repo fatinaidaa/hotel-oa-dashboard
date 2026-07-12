@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Wifi, WifiOff, RefreshCw } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { nodesAPI } from '../services/api'
+import { formatTime } from '../utils/dateTime'
 
 const rssiStrength = (rssi) => {
 if (rssi === null || rssi === undefined)
@@ -214,7 +215,7 @@ return ( <div className="p-6">
             </span>
 
             <span className="text-xs text-gray-400">
-              {new Date(node.last_seen).toLocaleTimeString()}
+              {formatTime(node.last_seen)}
             </span>
 
           </div>

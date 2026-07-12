@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import StatCard from '../components/StatCard'
 import PageHeader from '../components/PageHeader'
 import { roomsAPI, requestsAPI, sessionsAPI } from '../services/api'
+import { formatTime } from '../utils/dateTime'
 
 export default function Dashboard() {
   const [rooms, setRooms] = useState([])
@@ -176,9 +177,7 @@ export default function Dashboard() {
 
                   <p className="text-xs text-gray-400">
                     Room {req.room_id} ·{' '}
-                    {new Date(
-                      req.created_at
-                    ).toLocaleTimeString()}
+                    {formatTime(req.created_at)}
                   </p>
                 </div>
 

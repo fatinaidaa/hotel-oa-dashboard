@@ -2,21 +2,10 @@ import { useState, useEffect } from 'react'
 import { Check, X } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { requestsAPI } from '../services/api'
+import { formatDateTime } from '../utils/dateTime'
 
 const formatRequestDate = (dateValue) => {
-  const formatted = new Date(dateValue).toLocaleString('en-MY', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-  })
-
-  return formatted.replace(
-    /\b(am|pm)\b/gi,
-    period => period.toUpperCase()
-  )
+  return formatDateTime(dateValue)
 }
 
 export default function Requests() {

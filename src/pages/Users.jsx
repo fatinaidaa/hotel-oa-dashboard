@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Unplug } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { sessionsAPI } from '../services/api'
+import { formatDateTime } from '../utils/dateTime'
 
 export default function Users() {
 
@@ -164,7 +165,7 @@ export default function Users() {
                 </td>
 
                 <td className="px-4 py-3">
-                  {new Date(user.login_time).toLocaleString('ms-MY')}
+                  {formatDateTime(user.login_time)}
                 </td>
 
                 <td className="px-4 py-3">
