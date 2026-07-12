@@ -36,7 +36,7 @@ export default function Layout({ children }) {
               <Wifi size={16} className="text-white" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-800 leading-tight">Mesh Monitor</p>
+              <p className="text-sm font-semibold text-gray-800 leading-tight">Hotel OA Network Monitor</p>
               <p className="text-xs text-gray-400">Staff Portal</p>
             </div>
           </div>

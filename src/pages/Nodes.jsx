@@ -66,7 +66,7 @@ return ( <div className="p-6">
 
 
   <PageHeader
-    title="Mesh Nodes"
+    title="Network Nodes"
     subtitle="Real-time ESP32 node monitoring"
     action={
       <button

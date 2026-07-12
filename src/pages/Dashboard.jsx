@@ -55,7 +55,7 @@ export default function Dashboard() {
     <div className="p-6">
       <PageHeader
         title="Dashboard"
-        subtitle="Mesh network overview"
+        subtitle="Distributed hotel network overview"
       />
 
       {/* Stat Cards */}

@@ -41,7 +41,7 @@ export default function Login() {
           <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center mb-3 shadow-sm">
             <Wifi size={22} className="text-white" />
           </div>
-          <h1 className="text-base font-semibold text-gray-800">Mesh Monitoring</h1>
+          <h1 className="text-base font-semibold text-gray-800">Hotel OA Network Monitoring</h1>
           <p className="text-xs text-gray-400">Staff Portal System</p>
         </div>
 
