@@ -32,6 +32,118 @@ const suggestionStyle = (severity) => {
   }
 }
 
+const numberOrNull = (value) => {
+  const numberValue = Number(value)
+  return Number.isFinite(numberValue)
+    ? numberValue
+    : null
+}
+
+const buildRoomSuggestion = (req) => {
+  const currentConnections =
+    numberOrNull(req.current_connections) ?? 0
+  const deviceLimit =
+    numberOrNull(req.device_limit) ?? 0
+  const rssi =
+    numberOrNull(req.rssi)
+  const latency =
+    numberOrNull(req.wifi_latency_ms)
+  const jitter =
+    numberOrNull(req.wifi_jitter_ms)
+  const packetLoss =
+    numberOrNull(req.wifi_packet_loss)
+  const successRate =
+    numberOrNull(req.wifi_success_rate)
+
+  const reasons = []
+  const warnings = []
+
+  if (req.node_status && req.node_status !== 'online') {
+    warnings.push('Room monitor node is offline, so WiFi quality cannot be verified.')
+  }
+
+  if (rssi !== null && rssi < -70) {
+    reasons.push(`Weak WiFi signal (${rssi} dBm).`)
+  } else if (rssi !== null && rssi < -60) {
+    warnings.push(`Signal is only fair (${rssi} dBm).`)
+  }
+
+  if (latency !== null && latency > 80) {
+    reasons.push(`High WiFi latency (${latency} ms).`)
+  } else if (latency !== null && latency > 30) {
+    warnings.push(`Latency is higher than ideal (${latency} ms).`)
+  }
+
+  if (jitter !== null && jitter > 30) {
+    reasons.push(`High jitter (${jitter} ms), indicating unstable WiFi.`)
+  } else if (jitter !== null && jitter > 15) {
+    warnings.push(`Jitter is moderate (${jitter} ms).`)
+  }
+
+  if (packetLoss !== null && packetLoss > 5) {
+    reasons.push(`High packet loss (${packetLoss}%).`)
+  } else if (packetLoss !== null && packetLoss > 0) {
+    warnings.push(`Minor packet loss detected (${packetLoss}%).`)
+  }
+
+  if (successRate !== null && successRate < 95) {
+    reasons.push(`Low success rate (${successRate}%).`)
+  } else if (successRate !== null && successRate < 99) {
+    warnings.push(`Success rate is slightly reduced (${successRate}%).`)
+  }
+
+  if (
+    latency === null &&
+    jitter === null &&
+    packetLoss === null &&
+    successRate === null
+  ) {
+    warnings.push('No recent WiFi performance data is available for this room.')
+  }
+
+  if (reasons.length > 0) {
+    return {
+      decision: 'reject',
+      label: 'AI suggests reject',
+      severity: 'critical',
+      confidence: 'High',
+      summary: 'The room network condition is not suitable for an additional device right now.',
+      reasons,
+      currentConnections,
+      deviceLimit,
+      projectedLimit: deviceLimit + 1
+    }
+  }
+
+  if (warnings.length > 0) {
+    return {
+      decision: 'review',
+      label: 'AI suggests review',
+      severity: 'warning',
+      confidence: 'Medium',
+      summary: 'The request can be considered, but staff should review the room network condition first.',
+      reasons: warnings,
+      currentConnections,
+      deviceLimit,
+      projectedLimit: deviceLimit + 1
+    }
+  }
+
+  return {
+    decision: 'approve',
+    label: 'AI suggests approve',
+    severity: 'good',
+    confidence: 'High',
+    summary: 'The room network is stable and can support one additional device.',
+    reasons: [
+      'Signal, latency, jitter, packet loss, and success rate are within acceptable range.'
+    ],
+    currentConnections,
+    deviceLimit,
+    projectedLimit: deviceLimit + 1
+  }
+}
+
 export default function Requests() {
   const [requests, setRequests] = useState([])
   const [loading, setLoading] = useState(true)
@@ -175,7 +287,7 @@ HOTEL OA`
         <div className="space-y-3">
           {requests.map(req => {
             const suggestion =
-              req.ai_suggestion
+              req.ai_suggestion ?? buildRoomSuggestion(req)
             const style =
               suggestionStyle(suggestion?.severity)
 
