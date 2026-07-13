@@ -65,7 +65,6 @@ export default function Traffic() {
   const avgJitter = average(data, 'jitter')
   const avgPacketLoss = average(data, 'packetLoss')
   const avgSuccessRate = average(data, 'successRate')
-  const avgThroughput = average(data, 'estimatedThroughput')
 
   return (
     <div className="p-6">
@@ -158,7 +157,7 @@ export default function Traffic() {
         )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
             label: 'Avg Latency',
@@ -179,12 +178,7 @@ export default function Traffic() {
             label: 'Success Rate',
             value: `${avgSuccessRate.toFixed(1)}%`,
             color: avgSuccessRate < 95 ? 'text-red-600' : avgSuccessRate < 98 ? 'text-amber-600' : 'text-green-600'
-          },
-          {
-            label: 'Est. Throughput',
-            value: `${avgThroughput.toFixed(1)} Mbps`,
-            color: 'text-primary-600'
-          },
+          }
         ].map(stat => (
           <div key={stat.label} className="card p-3 text-center">
             <p className="text-xs text-gray-400">{stat.label}</p>
