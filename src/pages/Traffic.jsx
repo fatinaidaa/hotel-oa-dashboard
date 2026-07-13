@@ -17,7 +17,7 @@ const average = (data, key) => {
   ) / data.length
 }
 
-export default function Traffic() {
+export default function Traffic({ embedded = false }) {
   const [range, setRange] = useState('1h')
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -66,29 +66,45 @@ export default function Traffic() {
   const avgPacketLoss = average(data, 'packetLoss')
   const avgSuccessRate = average(data, 'successRate')
 
+  const rangeButtons = (
+    <div className="flex gap-1 bg-gray-100 p-0.5 rounded-lg">
+      {RANGES.map(r => (
+        <button
+          key={r}
+          onClick={() => setRange(r)}
+          className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
+            range === r
+              ? 'bg-white text-gray-700 font-medium shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          {r}
+        </button>
+      ))}
+    </div>
+  )
+
   return (
-    <div className="p-6">
-      <PageHeader
-        title="WiFi Performance Monitor"
-        subtitle="WiFi latency, jitter, packet loss, and success rate measured from ESP32 nodes to the local gateway"
-        action={
-          <div className="flex gap-1 bg-gray-100 p-0.5 rounded-lg">
-            {RANGES.map(r => (
-              <button
-                key={r}
-                onClick={() => setRange(r)}
-                className={`px-3 py-1.5 text-xs rounded-md transition-colors ${
-                  range === r
-                    ? 'bg-white text-gray-700 font-medium shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {r}
-              </button>
-            ))}
+    <div className={embedded ? 'mt-6' : 'p-6'}>
+      {embedded ? (
+        <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800">
+              WiFi Performance Trend
+            </h2>
+            <p className="text-sm text-gray-400">
+              Overall latency, jitter, packet loss, and success rate from all room monitor nodes
+            </p>
           </div>
-        }
-      />
+          {rangeButtons}
+        </div>
+      ) : (
+        <PageHeader
+          title="WiFi Performance Monitor"
+          subtitle="WiFi latency, jitter, packet loss, and success rate measured from ESP32 nodes to the local gateway"
+          action={rangeButtons}
+        />
+      )}
 
       {error && (
         <div className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">

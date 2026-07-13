@@ -2,15 +2,14 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
   Wifi, LayoutDashboard, Radio, Users,
-  Activity, LogOut, Bell, ChevronRight
+  LogOut, Bell, ChevronRight
 } from 'lucide-react'
 
 const navItems = [
   { to: '/dashboard',  label: 'Dashboard',   icon: LayoutDashboard },
   { to: '/rooms',      label: 'Room Status',  icon: LayoutDashboard },
-  { to: '/nodes',      label: 'Nodes',        icon: Radio           },
+  { to: '/nodes',      label: 'Network Monitor', icon: Radio       },
   { to: '/users',      label: 'Connected Users', icon: Users        },
-  { to: '/traffic',    label: 'Traffic',      icon: Activity        },
   { to: '/requests',   label: 'Requests',     icon: Bell            },
 ]
 

@@ -9,7 +9,6 @@ import Dashboard from './pages/Dashboard'
 import Rooms     from './pages/Rooms'
 import Nodes     from './pages/Nodes'
 import Users     from './pages/Users'
-import Traffic   from './pages/Traffic'
 import Requests  from './pages/Requests'
 
 // ── Protected Route wrapper ───────────────────────────────────────────────────
@@ -43,7 +42,7 @@ export default function App() {
           <Route path="/rooms"     element={<DashboardLayout><Rooms     /></DashboardLayout>} />
           <Route path="/nodes"     element={<DashboardLayout><Nodes     /></DashboardLayout>} />
           <Route path="/users"     element={<DashboardLayout><Users     /></DashboardLayout>} />
-          <Route path="/traffic"   element={<DashboardLayout><Traffic   /></DashboardLayout>} />
+          <Route path="/traffic"   element={<Navigate to="/nodes" replace />} />
           <Route path="/requests"  element={<DashboardLayout><Requests  /></DashboardLayout>} />
 
           {/* Default redirect */}

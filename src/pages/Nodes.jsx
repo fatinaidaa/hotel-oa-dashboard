@@ -3,6 +3,7 @@ import { Wifi, WifiOff, RefreshCw } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
 import { nodesAPI } from '../services/api'
 import { formatTime } from '../utils/dateTime'
+import Traffic from './Traffic'
 
 const rssiStrength = (rssi) => {
 if (rssi === null || rssi === undefined)
@@ -67,8 +68,8 @@ return ( <div className="p-6">
 
 
   <PageHeader
-    title="Network Nodes"
-    subtitle="Real-time ESP32 node monitoring"
+    title="Network Monitor"
+    subtitle="Room-based ESP32 nodes and overall WiFi performance"
     action={
       <button
         onClick={loadNodes}
@@ -99,6 +100,8 @@ return ( <div className="p-6">
         node.wifi_latency_ms ?? node.latency_ms
       const wifiPacketLoss =
         node.wifi_packet_loss ?? node.packet_loss
+      const wifiJitter =
+        node.wifi_jitter_ms ?? node.jitter_ms
       const wifiSuccessRate =
         node.wifi_success_rate ?? node.success_rate
 
@@ -198,12 +201,12 @@ return ( <div className="p-6">
             <div>
 
               <p className="text-xs text-gray-400">
-                Uptime
+                WiFi Latency
               </p>
 
               <p className="text-sm font-semibold text-gray-700 mt-0.5">
-                {isOnline
-                  ? `${node.uptime}s`
+                {isOnline && wifiLatency !== null
+                  ? `${wifiLatency} ms`
                   : '—'}
               </p>
 
@@ -212,12 +215,12 @@ return ( <div className="p-6">
             <div>
 
               <p className="text-xs text-gray-400">
-                WiFi Latency
+                Jitter
               </p>
 
               <p className="text-sm font-semibold text-gray-700 mt-0.5">
-                {isOnline && wifiLatency !== null
-                  ? `${wifiLatency} ms`
+                {isOnline && wifiJitter !== null
+                  ? `${wifiJitter} ms`
                   : '—'}
               </p>
 
@@ -256,6 +259,12 @@ return ( <div className="p-6">
             </span>
 
             <span className="text-xs text-gray-400">
+              Uptime: {isOnline
+                ? `${node.uptime}s`
+                : 'â€”'}
+            </span>
+
+            <span className="text-xs text-gray-400">
               {formatTime(node.last_seen)}
             </span>
 
@@ -268,6 +277,8 @@ return ( <div className="p-6">
     })}
 
   </div>
+
+  <Traffic embedded />
 
 </div>
 )
