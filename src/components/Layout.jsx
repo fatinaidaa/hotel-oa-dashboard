@@ -16,6 +16,10 @@ const navItems = [
 export default function Layout({ children }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const displayName =
+    user?.fullName ||
+    user?.name ||
+    'Staff'
 
   const handleLogout = () => {
     logout()
@@ -66,11 +70,11 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-gray-50 mb-1">
             <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
               <span className="text-xs font-semibold text-primary-600">
-                {user?.name?.[0]?.toUpperCase() ?? 'S'}
+                {displayName?.[0]?.toUpperCase() ?? 'S'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-gray-700 truncate">{user?.name ?? 'Staff'}</p>
+              <p className="text-xs font-medium text-gray-700 truncate">{displayName}</p>
               <p className="text-xs text-gray-400 truncate">{user?.staffId ?? ''}</p>
             </div>
           </div>
