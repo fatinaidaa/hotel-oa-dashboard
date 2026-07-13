@@ -8,6 +8,15 @@ import { trafficAPI } from '../services/api'
 
 const RANGES = ['1h', '6h', '24h']
 
+const average = (data, key) => {
+  if (!data.length) return 0
+
+  return data.reduce(
+    (total, item) => total + (Number(item[key]) || 0),
+    0
+  ) / data.length
+}
+
 export default function Traffic() {
   const [range, setRange] = useState('1h')
   const [data, setData] = useState([])
@@ -31,7 +40,7 @@ export default function Traffic() {
         console.error(err)
 
         if (isMounted) {
-          setError('Failed to load traffic data.')
+          setError('Failed to load network performance data.')
           setData([])
         }
       } finally {
@@ -52,21 +61,17 @@ export default function Traffic() {
   }, [range])
 
   const hasData = data.length > 0
-  const peakDownload = hasData
-    ? Math.max(...data.map(d => Number(d.download) || 0))
-    : 0
-  const peakUpload = hasData
-    ? Math.max(...data.map(d => Number(d.upload) || 0))
-    : 0
-  const avgDownload = hasData
-    ? data.reduce((total, item) => total + (Number(item.download) || 0), 0) / data.length
-    : 0
+  const avgLatency = average(data, 'latency')
+  const avgJitter = average(data, 'jitter')
+  const avgPacketLoss = average(data, 'packetLoss')
+  const avgSuccessRate = average(data, 'successRate')
+  const avgThroughput = average(data, 'estimatedThroughput')
 
   return (
     <div className="p-6">
       <PageHeader
-        title="Traffic Monitor"
-        subtitle="Estimated bandwidth based on connected users and ESP32 node signal"
+        title="Network Performance Monitor"
+        subtitle="Latency, jitter, packet loss, and success rate from ESP32 room monitor nodes"
         action={
           <div className="flex gap-1 bg-gray-100 p-0.5 rounded-lg">
             {RANGES.map(r => (
@@ -86,7 +91,6 @@ export default function Traffic() {
         }
       />
 
-      {/* Chart */}
       {error && (
         <div className="mb-4 rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
@@ -94,11 +98,17 @@ export default function Traffic() {
       )}
 
       <div className="card p-4 mb-4">
-        <h2 className="text-xs font-medium text-gray-400 mb-4 uppercase tracking-wide">Bandwidth (Mbps)</h2>
+        <h2 className="text-xs font-medium text-gray-400 mb-4 uppercase tracking-wide">
+          Response Time (ms)
+        </h2>
 
         {loading && !hasData ? (
           <div className="h-[260px] flex items-center justify-center text-sm text-gray-400">
-            Loading traffic data...
+            Loading network performance data...
+          </div>
+        ) : !hasData ? (
+          <div className="h-[260px] flex items-center justify-center text-sm text-gray-400">
+            No network performance data yet. Upload the updated ESP32 room monitor nodes first.
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={260}>
@@ -114,7 +124,7 @@ export default function Traffic() {
                 tick={{ fontSize: 11, fill: '#9ca3af' }}
                 axisLine={false}
                 tickLine={false}
-                width={30}
+                width={40}
               />
               <Tooltip
                 contentStyle={{
@@ -127,8 +137,8 @@ export default function Traffic() {
               <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '12px' }} />
               <Line
                 type="monotone"
-                dataKey="download"
-                name="Download"
+                dataKey="latency"
+                name="Latency"
                 stroke="#185FA5"
                 strokeWidth={2}
                 dot={false}
@@ -136,9 +146,9 @@ export default function Traffic() {
               />
               <Line
                 type="monotone"
-                dataKey="upload"
-                name="Upload"
-                stroke="#3B6D11"
+                dataKey="jitter"
+                name="Jitter"
+                stroke="#F59E0B"
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4 }}
@@ -148,16 +158,39 @@ export default function Traffic() {
         )}
       </div>
 
-      {/* Summary stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {[
-          { label: 'Peak Download', value: `${peakDownload.toFixed(1)} Mbps`, color: 'text-primary-600' },
-          { label: 'Peak Upload',   value: `${peakUpload.toFixed(1)} Mbps`,   color: 'text-green-600'   },
-          { label: 'Avg Download',  value: `${avgDownload.toFixed(1)} Mbps`, color: 'text-gray-600' },
+          {
+            label: 'Avg Latency',
+            value: `${avgLatency.toFixed(0)} ms`,
+            color: avgLatency > 200 ? 'text-red-600' : avgLatency > 100 ? 'text-amber-600' : 'text-green-600'
+          },
+          {
+            label: 'Avg Jitter',
+            value: `${avgJitter.toFixed(0)} ms`,
+            color: avgJitter > 20 ? 'text-red-600' : avgJitter > 10 ? 'text-amber-600' : 'text-green-600'
+          },
+          {
+            label: 'Packet Loss',
+            value: `${avgPacketLoss.toFixed(1)}%`,
+            color: avgPacketLoss > 5 ? 'text-red-600' : avgPacketLoss > 2 ? 'text-amber-600' : 'text-green-600'
+          },
+          {
+            label: 'Success Rate',
+            value: `${avgSuccessRate.toFixed(1)}%`,
+            color: avgSuccessRate < 95 ? 'text-red-600' : avgSuccessRate < 98 ? 'text-amber-600' : 'text-green-600'
+          },
+          {
+            label: 'Est. Throughput',
+            value: `${avgThroughput.toFixed(1)} Mbps`,
+            color: 'text-primary-600'
+          },
         ].map(stat => (
           <div key={stat.label} className="card p-3 text-center">
             <p className="text-xs text-gray-400">{stat.label}</p>
-            <p className={`text-base font-semibold mt-1 ${stat.color}`}>{stat.value}</p>
+            <p className={`text-base font-semibold mt-1 ${stat.color}`}>
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>

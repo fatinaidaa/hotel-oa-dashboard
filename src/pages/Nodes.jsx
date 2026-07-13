@@ -158,7 +158,7 @@ return ( <div className="p-6">
 
           </div>
 
-          <div className="grid grid-cols-3 gap-2 text-center border-t border-gray-50 pt-3">
+          <div className="grid grid-cols-5 gap-2 text-center border-t border-gray-50 pt-3">
 
             <div>
 
@@ -202,6 +202,34 @@ return ( <div className="p-6">
 
             </div>
 
+            <div>
+
+              <p className="text-xs text-gray-400">
+                Latency
+              </p>
+
+              <p className="text-sm font-semibold text-gray-700 mt-0.5">
+                {isOnline && node.latency_ms !== null
+                  ? `${node.latency_ms} ms`
+                  : '—'}
+              </p>
+
+            </div>
+
+            <div>
+
+              <p className="text-xs text-gray-400">
+                Loss
+              </p>
+
+              <p className="text-sm font-semibold text-gray-700 mt-0.5">
+                {isOnline && node.packet_loss !== null
+                  ? `${Number(node.packet_loss).toFixed(1)}%`
+                  : '—'}
+              </p>
+
+            </div>
+
           </div>
 
           <div className="mt-3 flex justify-between items-center">
@@ -212,6 +240,12 @@ return ( <div className="p-6">
               {isOnline
                 ? `Signal: ${signal.label}`
                 : 'Signal: —'}
+            </span>
+
+            <span className="text-xs text-gray-400">
+              Success: {isOnline && node.success_rate !== null
+                ? `${Number(node.success_rate).toFixed(1)}%`
+                : '—'}
             </span>
 
             <span className="text-xs text-gray-400">
