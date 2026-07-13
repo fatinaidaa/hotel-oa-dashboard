@@ -95,6 +95,13 @@ return ( <div className="p-6">
         ? rssiStrength(node.rssi)
         : { label: '—', color: 'text-gray-400' }
 
+      const wifiLatency =
+        node.wifi_latency_ms ?? node.latency_ms
+      const wifiPacketLoss =
+        node.wifi_packet_loss ?? node.packet_loss
+      const wifiSuccessRate =
+        node.wifi_success_rate ?? node.success_rate
+
       return (
 
         <div
@@ -205,12 +212,12 @@ return ( <div className="p-6">
             <div>
 
               <p className="text-xs text-gray-400">
-                Latency
+                WiFi Latency
               </p>
 
               <p className="text-sm font-semibold text-gray-700 mt-0.5">
-                {isOnline && node.latency_ms !== null
-                  ? `${node.latency_ms} ms`
+                {isOnline && wifiLatency !== null
+                  ? `${wifiLatency} ms`
                   : '—'}
               </p>
 
@@ -223,8 +230,8 @@ return ( <div className="p-6">
               </p>
 
               <p className="text-sm font-semibold text-gray-700 mt-0.5">
-                {isOnline && node.packet_loss !== null
-                  ? `${Number(node.packet_loss).toFixed(1)}%`
+                {isOnline && wifiPacketLoss !== null
+                  ? `${Number(wifiPacketLoss).toFixed(1)}%`
                   : '—'}
               </p>
 
@@ -243,8 +250,8 @@ return ( <div className="p-6">
             </span>
 
             <span className="text-xs text-gray-400">
-              Success: {isOnline && node.success_rate !== null
-                ? `${Number(node.success_rate).toFixed(1)}%`
+              Success: {isOnline && wifiSuccessRate !== null
+                ? `${Number(wifiSuccessRate).toFixed(1)}%`
                 : '—'}
             </span>
 

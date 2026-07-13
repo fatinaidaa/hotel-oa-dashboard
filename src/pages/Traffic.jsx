@@ -69,8 +69,8 @@ export default function Traffic() {
   return (
     <div className="p-6">
       <PageHeader
-        title="Network Performance Monitor"
-        subtitle="Latency, jitter, packet loss, and success rate from ESP32 room monitor nodes"
+        title="WiFi Performance Monitor"
+        subtitle="WiFi latency, jitter, packet loss, and success rate measured from ESP32 nodes to the local gateway"
         action={
           <div className="flex gap-1 bg-gray-100 p-0.5 rounded-lg">
             {RANGES.map(r => (
@@ -160,12 +160,12 @@ export default function Traffic() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           {
-            label: 'Avg Latency',
+            label: 'Avg WiFi Latency',
             value: `${avgLatency.toFixed(0)} ms`,
             color: avgLatency > 200 ? 'text-red-600' : avgLatency > 100 ? 'text-amber-600' : 'text-green-600'
           },
           {
-            label: 'Avg Jitter',
+            label: 'Avg WiFi Jitter',
             value: `${avgJitter.toFixed(0)} ms`,
             color: avgJitter > 20 ? 'text-red-600' : avgJitter > 10 ? 'text-amber-600' : 'text-green-600'
           },
