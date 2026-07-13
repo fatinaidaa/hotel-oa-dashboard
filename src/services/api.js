@@ -87,4 +87,10 @@ export const trafficAPI = {
   getData: (range = '1h') => api.get(`/traffic?range=${range}`),
 }
 
+// AI Network Insight
+// GET /api/ai/network-insight → diagnosis and recommendations
+export const networkInsightAPI = {
+  getLatest: () => api.get('/ai/network-insight'),
+}
+
 export default api

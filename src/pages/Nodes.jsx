@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Wifi, WifiOff, RefreshCw } from 'lucide-react'
+import { Wifi, WifiOff, RefreshCw, Sparkles } from 'lucide-react'
 import PageHeader from '../components/PageHeader'
-import { nodesAPI } from '../services/api'
+import { nodesAPI, networkInsightAPI } from '../services/api'
 import { formatTime } from '../utils/dateTime'
 import Traffic from './Traffic'
 
@@ -21,10 +21,30 @@ return { label: 'Fair', color: 'text-amber-500' }
 return { label: 'Weak', color: 'text-red-500' }
 }
 
+const insightStyle = (severity) => {
+if (severity === 'critical')
+return {
+  badge: 'bg-red-50 text-red-600',
+  icon: 'bg-red-50 text-red-600'
+}
+
+if (severity === 'warning')
+return {
+  badge: 'bg-amber-50 text-amber-600',
+  icon: 'bg-amber-50 text-amber-600'
+}
+
+return {
+  badge: 'bg-green-50 text-green-600',
+  icon: 'bg-green-50 text-green-600'
+}
+}
+
 export default function Nodes() {
 
 const [nodes, setNodes] = useState([])
 const [loading, setLoading] = useState(false)
+const [insight, setInsight] = useState(null)
 
 const loadNodes = async () => {
 
@@ -36,6 +56,22 @@ try {
   const res = await nodesAPI.getAll()
 
   setNodes(res.data)
+
+  try {
+
+    const insightRes =
+      await networkInsightAPI.getLatest()
+
+    setInsight(insightRes.data)
+
+  } catch (insightErr) {
+
+    console.error(
+      'Failed loading AI network insight:',
+      insightErr
+    )
+
+  }
 
 } catch (err) {
 
@@ -64,6 +100,9 @@ return () => clearInterval(interval)
 
 }, [])
 
+const aiStyle =
+insightStyle(insight?.severity)
+
 return ( <div className="p-6">
 
 
@@ -85,6 +124,77 @@ return ( <div className="p-6">
     <p className="text-sm text-gray-400 mb-4">
       Updating nodes...
     </p>
+  )}
+
+  {insight && (
+    <div className="card p-4 mb-4">
+      <div className="flex items-start gap-3">
+        <div
+          className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${aiStyle.icon}`}
+        >
+          <Sparkles size={16} />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-gray-800">
+                AI Network Insight
+              </p>
+              <p className="text-sm text-gray-500 mt-1">
+                {insight.summary}
+              </p>
+            </div>
+
+            <span
+              className={`text-xs px-2 py-1 rounded-full font-medium self-start ${aiStyle.badge}`}
+            >
+              {insight.severity}
+            </span>
+          </div>
+
+          {insight.aiExplanation && (
+            <p className="text-sm text-gray-600 mt-3">
+              {insight.aiExplanation}
+            </p>
+          )}
+
+          <div className="grid gap-3 lg:grid-cols-2 mt-4">
+            <div>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+                Findings
+              </p>
+              <ul className="space-y-1.5">
+                {(insight.findings || []).map((item, index) => (
+                  <li
+                    key={index}
+                    className="text-sm text-gray-600"
+                  >
+                    • {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">
+                Recommended Actions
+              </p>
+              <ul className="space-y-1.5">
+                {(insight.recommendations || []).map((item, index) => (
+                  <li
+                    key={index}
+                    className="text-sm text-gray-600"
+                  >
+                    • {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )}
 
   <div className="grid gap-3 sm:grid-cols-2">
